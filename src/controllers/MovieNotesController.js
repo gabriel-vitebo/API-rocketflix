@@ -1,3 +1,4 @@
+const { request, response } = require("express")
 const knex = require("../database/knex")
 const AppError = require("../utils/AppError")
 
@@ -41,6 +42,24 @@ class MovieNotesController {
       ...note,
       tags
     })
+  }
+
+  async delete(request, response) {
+    const { id } = request.params
+
+    await knex("movieNotes").where({ id }).delete()
+
+    return response.json()
+  }
+
+  async index(request, response) {
+    const { title, user_id } = request.query
+    const notes = await knex("movieNotes")
+    .where({ user_id })
+    .whereLike("title", `%${title}%`)
+    .orderBy("title")
+
+    return response.json(notes)
   }
 }
 
