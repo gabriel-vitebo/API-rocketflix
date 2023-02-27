@@ -4,7 +4,7 @@ const AppError = require("../utils/AppError")
 
 class MovieNotesController {
   async create(request, response) {
-    const { title, description, rating, tags} = request.body
+    const { title, description, rating, tags } = request.body
     const { user_id } = request.params
 
     if (rating > 5 || rating < 0) {
@@ -15,10 +15,10 @@ class MovieNotesController {
       title,
       description,
       rating,
-      user_id
+      user_id,
     })
 
-    const tagsInsert = tags.map( name => {
+    const tagsInsert = tags.map((name) => {
       return {
         note_id,
         name,
@@ -28,8 +28,7 @@ class MovieNotesController {
 
     await knex("tags").insert(tagsInsert)
 
-    response.json()
-
+    return response.json()
   }
 
   async show(request, response) {
@@ -40,7 +39,7 @@ class MovieNotesController {
 
     return response.json({
       ...note,
-      tags
+      tags,
     })
   }
 
@@ -57,8 +56,8 @@ class MovieNotesController {
 
     let notes
 
-    if(tags) {
-      const filterTags = tags.split(',').map( tag => tag.trim())
+    if (tags) {
+      const filterTags = tags.split(",").map((tag) => tag.trim())
 
       notes = await knex("tags")
         .select(["movieNotes.id", "movieNotes.title", "movieNotes.user_id"])
@@ -67,8 +66,7 @@ class MovieNotesController {
         .whereIn("name", filterTags)
         .innerJoin("movieNotes", "movieNotes.id", "tags.note_id")
         .orderBy("movieNotes.title")
-
-    } else{
+    } else {
       notes = await knex("movieNotes")
         .where({ user_id })
         .whereLike("title", `%${title}%`)
@@ -76,18 +74,16 @@ class MovieNotesController {
     }
 
     const userTags = await knex("tags").where({ user_id })
-    const notesWithTags = notes.map( note => {
-      const noteTags = userTags.filter(tag => tag.note_id === note.id)
-      
+    const notesWithTags = notes.map((note) => {
+      const noteTags = userTags.filter((tag) => tag.note_id === note.id)
+
       return {
         ...note,
-        tags: noteTags
+        tags: noteTags,
       }
     })
-    
-    
+
     return response.json(notesWithTags)
-    
   }
 }
 
