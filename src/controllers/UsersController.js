@@ -5,6 +5,7 @@ const sqliteConnection = require("../database/sqlite")
 
 class UsersController {
   async create(request, response) {
+    console.log("entrou no back", request.body)
     const { name, email, password } = request.body
 
     const database = await sqliteConnection()
@@ -23,7 +24,7 @@ class UsersController {
       "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
       [name, email, hashedPassword]
     )
-
+    console.log("inseriu", response)
     return response.status(201).json()
   }
 
