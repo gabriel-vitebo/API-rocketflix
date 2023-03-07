@@ -12,5 +12,7 @@ it("user should be created", async () => {
   const userCreateServices = new UserCreateServices(userRepositoryInMemory)
   const userCreated = await userCreateServices.execute(user)
 
+  console.log(userCreated)
+
   expect(userCreated).toHaveProperty("id")
 })
