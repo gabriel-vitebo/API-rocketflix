@@ -11,17 +11,6 @@ class MovieNotesController {
       throw new AppError("De uma nota de 0 a 5")
     }
 
-    if (tags.length > 0) {
-      const tagsInsert = tags.map((name) => {
-        return {
-          title,
-          description,
-          rating,
-          user_id,
-        }
-      })
-    }
-
     const note_id = await knex("movieNotes").insert({
       title,
       description,
@@ -29,16 +18,18 @@ class MovieNotesController {
       user_id,
     })
 
-    const tagsInsert = tags.map((name) => {
-      return {
-        note_id,
-        name,
-        user_id,
-      }
-    })
+    if (tags.length > 0) {
+      const tagsInsert = tags.map((name) => {
+        return {
+          note_id,
+          name,
+          user_id,
+        }
+      })
+      console.log({ tagsInsert, tags })
 
-    await knex("tags").insert(tagsInsert)
-
+      await knex("tags").insert(tagsInsert)
+    }
     return response.json()
   }
 
