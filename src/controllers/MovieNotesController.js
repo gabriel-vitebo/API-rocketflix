@@ -69,6 +69,7 @@ class MovieNotesController {
         .whereLike("movieNotes.title", `%${title}%`)
         .whereIn("name", filterTags)
         .innerJoin("movieNotes", "movieNotes.id", "tags.note_id")
+        .groupBy("notes.id")
         .orderBy("movieNotes.title")
     } else {
       notes = await knex("movieNotes")
